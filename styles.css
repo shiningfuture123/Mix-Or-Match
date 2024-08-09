@@ -1,5 +1,219 @@
 * {
-    margin: 0;
-    padding: 0;
+    /* margin: 0;
+    padding: 0; */
     box-sizing: border-box;
+}
+
+@font-face {
+    font-family: "Creepy";
+    src: url(Assets/Fonts/Creepy.woff) format("woff"), url(Assets/Fonts/Creepy.woff2) format("woff2"); /* error prevention and extra precaution */
+}
+
+@font-face {
+    font-family: "Lunacy";
+    src: url(Assets/Fonts/Lunacy.woff) format("woff"), url(Assets/Fonts/Lunacy.woff2) format("woff2"); /* error prevention and extra precaution */
+}
+
+html {
+    /* could have also put it in the body but the cascade */
+    min-height: 100vh;
+
+    /* CUSTOM CURSOR */
+    cursor: url(Assets/Cursors/Ghost.cur), auto; /* auto is a fallback for when the image does not work similar to how their is a backup font */
+}
+
+body {
+    margin: 0;
+    background: radial-gradient(#9D5900, #3D2200);
+}
+
+.overlay-text {
+    display: none; /* makes it invisible unless there is visible class */
+    position: fixed; /* FIXED WILL NOT MOVE WITH THE PAGE WHEREAS ABSOLUTE WILL */
+    top: 0; /* this makes it stretch to the entire size of the page/viewport */
+    bottom: 0;
+    right: 0;
+    left: 0;
+    justify-content: center;
+    align-items: center;
+    z-index: 100; /* making the text above the cards */
+    color: #FF6D00;
+    font-family: "Creepy", sans-serif;
+}
+
+.overlay-text-small {
+    font-size: .3em; /* rem is relative to the html while em is relative to the parent */
+}
+
+.overlay-text.visible {
+    display: flex;
+    flex-direction: column;
+    animation: overlay-grow 500ms forwards; /* forwards: keeps the change permanent instead of reverting back like it originally would without fowards */
+}
+
+@keyframes overlay-grow { /* from and to are words to represent 0% to 100% without the specificity that %s allow where I could go 25% or 75% */
+    from {
+        background-color: rgba(0, 0, 0, 0);
+        font-size: 0;
+    }
+    to {
+        background-color: rgba(0, 0, 0, .8);
+        font-size: 10rem;
+    }
+}
+
+
+.page-title {
+    color: #FF6D00;
+    font-family: "Creepy", serif;
+    font-weight: normal; /* since by default h1 is bolded or could have done inherit instead */
+    text-align: center;
+    font-size: 6rem;
+}
+
+.game-info {
+    font-family: "Lunacy", serif;
+    color: #FFBB89;
+    font-size: 4rem;
+}
+
+.game-info-container {
+    grid-column: 1/-1;
+    display: flex;
+    justify-content: space-between;
+
+}
+
+.game-container {
+    display: grid;
+    grid-template-columns: repeat(4, auto);
+    grid-gap: 10px;
+    margin: 50px auto;
+    justify-content: center;
+    perspective: 500px; /* GURLLLLL WHAT IS THIS???? */ /* basically its as if we are standing far from the screen creating a 3D space instead of a 2D one */
+}
+
+.card {
+    position: relative; /* IMPORTANT!!!! because the parent has no positioning (static by default), the child will reference the nearest positioned ancestor, which might be the html or body element. As a result, the child will stretch to 100% of the viewport, not the parent, leading to overflow. */
+    height: 175px;
+    width: 125px;
+}
+
+.card-face {
+    position: absolute; /* since both front and back facing cards must overlap eachother instead of being relative */
+    width: 100%;
+    height: 100%; /* 100% size of 175px and 125px */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    backface-visibility: hidden; /* IMPORTANT!!!!! needs this because the card-front is overlapping the card-back which means it wont be able to flip */
+    border-radius: 12px;
+    border-width: 1px;  /* this is basically an extra version of border: solid color size */
+    border-style: solid;
+    transition: transform 500ms ease-in-out;
+}
+
+.card-face:hover {
+    cursor: url(Assets/Cursors/GhostHover.cur), auto;
+}
+
+.card-back {
+    background-color: black;
+    border-color: #FF6D00;
+}
+
+.card-front {
+    transform: rotateY(180deg); /* IMPORTANT!!!!!! the card is flipped over onto it backside and is now invisible due to back-face */
+    background-color: #FFBB89;
+    border-color: #333;
+}
+
+.card.visible .card-back{
+    transform: rotateY(-180deg); /* when there is visible class the back facing card rotates to be invisible by backface-visbility */
+}
+
+.card.visible .card-front {
+    transform: rotateY(0); /* it was originally at -180deg so now we are reversing it back to 0deg */
+}
+
+.card.matched .card-value {
+    animation: dance 1s linear infinite 500ms; /* animation: name, duration, speed of function, repeat, delay */
+}
+
+@keyframes dance {
+    0%, 100% { /* percentage stands for start and stop where 0% is start of animation and 100% is end of animation */
+        transform: rotate(0);
+    }
+    25% {
+        transform: rotate(-30deg);
+    }
+    75% {
+        transform: rotate(30deg);
+    }
+}
+
+.card-face:hover .cob-web {
+    width: 52px;
+    height: 52px;
+}
+
+.card-value {
+    transform: scale(0.9);
+    transition: transform 100ms ease-in-out; /* declaring transform to as to what it will transform into */
+}
+
+.card-front:hover .card-value {
+    transform: scale(1);
+}
+
+.cob-web {
+    position: absolute; /* to give it free reign without affecting the others */
+    width: 47px;
+    height: 47px;
+    transition: width 100ms ease-in-out, height 100ms ease-in-out;
+}
+
+.cob-web-top-left {
+    transform: rotate(270deg); /* to rotate an image */
+    top: 0;
+    left: 0;
+}
+
+.cob-web-top-right {
+    top: 0;
+    right: 0;
+}
+
+.cob-web-bottom-left {
+    transform: rotate(180deg); /* to rotate an image */
+    bottom: 0;
+    left: 0;
+}
+
+.cob-web-bottom-right {
+    transform: rotate(90deg); /* to rotate an image */
+    bottom: 0;
+    right: 0;
+}
+
+.spider {
+    align-self: flex-start;
+    transform: translateY(-10px);
+    transition: transform 100ms ease-in-out; /* declaring transform to as to what it will transform into */
+}
+
+.card-back:hover .spider {
+    transform: translateY(0);
+}
+
+@media (max-width: 600px) { /*( when we are less than 600px width of the screen */
+    .game-container {
+        grid-template-columns: repeat(2, auto);
+    }
+
+    .game-info-container {
+        flex-direction: column;
+        align-items: center;
+    }
 }
